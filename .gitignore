@@ -1,0 +1,6 @@
+.codegraph
+dist
+.idea
+.traces
+scripts/*
+docs/*

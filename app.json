@@ -1,0 +1,62 @@
+{
+  "configVersion": "v2",
+  "app": {
+    "appId": 3204301,
+    "appName": "Vision_Digital_Balance_FAOD",
+    "appType": "watchface",
+    "version": {
+      "code": 1,
+      "name": "1.0"
+    },
+    "vender": "huami",
+    "description": "Amazfit Balance 480x480 migrated watchface",
+    "icon": "preview.png",
+    "cover": [
+      "preview.png"
+    ]
+  },
+  "permissions": [
+    "gps"
+  ],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "1.0.0",
+      "target": "1.0.1",
+      "minVersion": "1.0.0"
+    }
+  },
+  "targets": {
+    "balance": {
+      "module": {
+        "watchface": {
+          "path": "watchface/index",
+          "main": 1,
+          "editable": 0,
+          "lockscreen": 1
+        }
+      },
+      "platforms": [
+        {
+          "name": "Amazfit Balance",
+          "deviceSource": 8519936
+        },
+        {
+          "name": "Amazfit Balance",
+          "deviceSource": 8519937
+        },
+        {
+          "name": "Amazfit Balance",
+          "deviceSource": 8519939
+        }
+      ],
+      "designWidth": 480
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "Vision Digital Balance"
+    }
+  },
+  "defaultLanguage": "en-US",
+  "debug": false
+}
