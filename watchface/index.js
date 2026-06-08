@@ -60,6 +60,11 @@
         let normal_spo2_jumpable_img_click = ''
         let normal_heart_jumpable_img_click = ''
         let normal_step_jumpable_img_click = ''
+        let normal_month_calendar_button = ''
+        let normal_day_calendar_button = ''
+        let normal_lunar_month_calendar_button = ''
+        let normal_solar_term_calendar_button = ''
+        let normal_lunar_day_calendar_button = ''
         let idle_background_bg_img = ''
         let idle_system_disconnect_img = ''
         let idle_system_clock_img = ''
@@ -104,6 +109,59 @@
           init_view() {
 
             //dynamic modify start
+
+            const STATIC_LABELS = [
+              ['电量', 199, 36, 80, 16],
+              ['步数', 85, 286, 80, 16],
+              ['消耗', 195, 286, 90, 16],
+              ['距离', 305, 286, 80, 16],
+              ['血氧', 75, 340, 60, 16],
+              ['压力', 160, 340, 70, 16],
+              ['心率', 250, 340, 70, 16],
+              ['PAI', 345, 340, 60, 16],
+            ]
+
+            const TEXT_UNITS = [
+              ['km', 368, 309, 30, 22, 17],
+            ]
+
+            const WEEK_TEXTS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+            const LUNAR_INFO = [
+              0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2,
+              0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540, 0x0d6a0, 0x0ada2, 0x095b0, 0x14977,
+              0x04970, 0x0a4b0, 0x0b4b5, 0x06a50, 0x06d40, 0x1ab54, 0x02b60, 0x09570, 0x052f2, 0x04970,
+              0x06566, 0x0d4a0, 0x0ea50, 0x06e95, 0x05ad0, 0x02b60, 0x186e3, 0x092e0, 0x1c8d7, 0x0c950,
+              0x0d4a0, 0x1d8a6, 0x0b550, 0x056a0, 0x1a5b4, 0x025d0, 0x092d0, 0x0d2b2, 0x0a950, 0x0b557,
+              0x06ca0, 0x0b550, 0x15355, 0x04da0, 0x0a5b0, 0x14573, 0x052b0, 0x0a9a8, 0x0e950, 0x06aa0,
+              0x0aea6, 0x0ab50, 0x04b60, 0x0aae4, 0x0a570, 0x05260, 0x0f263, 0x0d950, 0x05b57, 0x056a0,
+              0x096d0, 0x04dd5, 0x04ad0, 0x0a4d0, 0x0d4d4, 0x0d250, 0x0d558, 0x0b540, 0x0b6a0, 0x195a6,
+              0x095b0, 0x049b0, 0x0a974, 0x0a4b0, 0x0b27a, 0x06a50, 0x06d40, 0x0af46, 0x0ab60, 0x09570,
+              0x04af5, 0x04970, 0x064b0, 0x074a3, 0x0ea50, 0x06b58, 0x05ac0, 0x0ab60, 0x096d5, 0x092e0,
+              0x0c960, 0x0d954, 0x0d4a0, 0x0da50, 0x07552, 0x056a0, 0x0abb7, 0x025d0, 0x092d0, 0x0cab5,
+              0x0a950, 0x0b4a0, 0x0baa4, 0x0ad50, 0x055d9, 0x04ba0, 0x0a5b0, 0x15176, 0x052b0, 0x0a930,
+              0x07954, 0x06aa0, 0x0ad50, 0x05b52, 0x04b60, 0x0a6e6, 0x0a4e0, 0x0d260, 0x0ea65, 0x0d530,
+              0x05aa0, 0x076a3, 0x096d0, 0x04bd7, 0x04ad0, 0x0a4d0, 0x1d0b6, 0x0d250, 0x0d520, 0x0dd45,
+              0x0b5a0, 0x056d0, 0x055b2, 0x049b0, 0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0,
+            ]
+            const LUNAR_MONTH_NAMES = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
+            const LUNAR_DAY_PREFIX = ['初', '十', '廿', '卅']
+            const LUNAR_DAY_NUMBERS = ['日', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
+            const LUNAR_FESTIVALS = {
+              '1-1': '春节',
+              '1-15': '元宵',
+              '2-2': '龙头',
+              '5-5': '端午',
+              '7-7': '七夕',
+              '7-15': '中元',
+              '8-15': '中秋',
+              '9-9': '重阳',
+              '12-8': '腊八',
+              '12-23': '小年',
+            }
+            const SOLAR_TERM_NAMES = ['小寒', '大寒', '立春', '雨水', '惊蛰', '春分', '清明', '谷雨', '立夏', '小满', '芒种', '夏至', '小暑', '大暑', '立秋', '处暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
+            const SOLAR_TERM_INFO = [0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072, 240693, 263343, 285989, 308563, 331033, 353350, 375494, 397447, 419210, 440795, 462224, 483532, 504758]
+            const LUNAR_BASE_YEAR = 1900
+            const LUNAR_BASE_DAY = dateToDayNumber(new Date(1900, 0, 31))
                     
             function createLabel(text, x, y, w, h, showLevel) {
               return hmUI.createWidget(hmUI.widget.TEXT, {
@@ -120,18 +178,238 @@
               })
             }
 
-            function createBar(x, y, h, showLevel) {
+            function createTextUnit(text, x, y, w, h, textSize, showLevel) {
               return hmUI.createWidget(hmUI.widget.TEXT, {
                 x,
                 y,
-                w: 10,
+                w,
                 h,
-                text: '|',
-                text_size: 22,
-                color: 0x8a8a8a,
+                text,
+                text_size: textSize,
+                color: 0xffffff,
+                align_h: hmUI.align.LEFT,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
+            function createWeekText(showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x: 193,
+                y: 86,
+                w: 96,
+                h: 36,
+                text: WEEK_TEXTS[new Date().getDay()],
+                text_size: 28,
+                color: 0xffffff,
                 align_h: hmUI.align.CENTER_H,
                 align_v: hmUI.align.CENTER_V,
                 show_level: showLevel,
+              })
+            }
+
+            function createDateText(text, x, y, w, showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x,
+                y,
+                w,
+                h: 36,
+                text,
+                text_size: 28,
+                color: 0xffffff,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
+            function createMonthText(showLevel) {
+              const currentDate = new Date()
+              return createDateText(`${currentDate.getMonth() + 1}月`, 112, 86, 92, showLevel)
+            }
+
+            function createDayText(showLevel) {
+              const currentDate = new Date()
+              const day = currentDate.getDate()
+              return createDateText(`${day}日`, 286, 86, 104, showLevel)
+            }
+
+            function leapMonth(year) {
+              return LUNAR_INFO[year - LUNAR_BASE_YEAR] & 0xf
+            }
+
+            function leapDays(year) {
+              if (!leapMonth(year)) return 0
+              return (LUNAR_INFO[year - LUNAR_BASE_YEAR] & 0x10000) ? 30 : 29
+            }
+
+            function monthDays(year, month) {
+              return (LUNAR_INFO[year - LUNAR_BASE_YEAR] & (0x10000 >> month)) ? 30 : 29
+            }
+
+            function lunarYearDays(year) {
+              let days = 348
+              for (let mask = 0x8000; mask > 0x8; mask >>= 1) {
+                if (LUNAR_INFO[year - LUNAR_BASE_YEAR] & mask) days += 1
+              }
+              return days + leapDays(year)
+            }
+
+            function dateToDayNumber(date) {
+              return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000)
+            }
+
+            function getLunarDate(date) {
+              let offset = dateToDayNumber(date) - LUNAR_BASE_DAY
+              let year = LUNAR_BASE_YEAR
+              const maxYear = LUNAR_BASE_YEAR + LUNAR_INFO.length - 1
+
+              if (offset < 0) {
+                return { year: LUNAR_BASE_YEAR, month: 1, day: 1, isLeap: false }
+              }
+
+              while (year <= maxYear) {
+                const daysOfYear = lunarYearDays(year)
+                if (offset < daysOfYear) break
+                offset -= daysOfYear
+                year += 1
+              }
+
+              if (year > maxYear) {
+                return { year: maxYear, month: 12, day: 30, isLeap: false }
+              }
+
+              const leap = leapMonth(year)
+              for (let month = 1; month <= 12; month += 1) {
+                const daysOfMonth = monthDays(year, month)
+                if (offset < daysOfMonth) {
+                  return {
+                    year,
+                    month,
+                    day: offset + 1,
+                    isLeap: false,
+                  }
+                }
+                offset -= daysOfMonth
+
+                if (leap === month) {
+                  const daysOfLeapMonth = leapDays(year)
+                  if (offset < daysOfLeapMonth) {
+                    return {
+                      year,
+                      month,
+                      day: offset + 1,
+                      isLeap: true,
+                    }
+                  }
+                  offset -= daysOfLeapMonth
+                }
+              }
+
+              return { year, month: 12, day: 30, isLeap: false }
+            }
+
+            function formatLunarDay(day) {
+              if (day === 10) return '初十'
+              if (day === 20) return '二十'
+              if (day === 30) return '三十'
+              return LUNAR_DAY_PREFIX[Math.floor(day / 10)] + LUNAR_DAY_NUMBERS[day % 10]
+            }
+
+            function getSolarTermDate(year, index) {
+              return new Date((31556925974.7 * (year - 1900)) + (SOLAR_TERM_INFO[index] * 60000) + Date.UTC(1900, 0, 6, 2, 5))
+            }
+
+            function getCurrentSolarTerm(date) {
+              const today = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+              let current = SOLAR_TERM_NAMES[SOLAR_TERM_NAMES.length - 1]
+              for (let year = date.getFullYear() - 1; year <= date.getFullYear(); year += 1) {
+                for (let index = 0; index < SOLAR_TERM_NAMES.length; index += 1) {
+                  const termDate = getSolarTermDate(year, index)
+                  const termDay = new Date(termDate.getFullYear(), termDate.getMonth(), termDate.getDate()).getTime()
+                  if (termDay <= today) current = SOLAR_TERM_NAMES[index]
+                }
+              }
+              return current
+            }
+
+            function getLunarFestival(lunar) {
+              if (lunar.isLeap) return ''
+              if (lunar.month === 12 && lunar.day === monthDays(lunar.year, 12)) return '除夕'
+              return LUNAR_FESTIVALS[`${lunar.month}-${lunar.day}`] || ''
+            }
+
+            function getFestivalOrSolarTerm(date) {
+              const lunar = getLunarDate(date)
+              return getLunarFestival(lunar) || getCurrentSolarTerm(date)
+            }
+
+            function createLunarText(text, x, y, w, showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x,
+                y,
+                w,
+                h: 28,
+                text,
+                text_size: 24,
+                color: 0xffffff,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
+            function createLunarMonthText(showLevel) {
+              const lunar = getLunarDate(new Date())
+              return createLunarText(`${lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[lunar.month - 1]}`, 115, 400, 60, showLevel)
+            }
+
+            function createLunarDayText(showLevel) {
+              const lunar = getLunarDate(new Date())
+              return createLunarText(formatLunarDay(lunar.day), 305, 400, 60, showLevel)
+            }
+
+            function createSolarTermText(showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x: 195,
+                y: 400,
+                w: 90,
+                h: 28,
+                text: getFestivalOrSolarTerm(new Date()),
+                text_size: 24,
+                color: 0xffffff,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
+            function renderStaticText(showLevel) {
+              STATIC_LABELS.forEach(([text, x, y, w, h]) => createLabel(text, x, y, w, h, showLevel))
+              TEXT_UNITS.forEach(([text, x, y, w, h, textSize]) => createTextUnit(text, x, y, w, h, textSize, showLevel))
+            }
+
+            function openCalendarApp() {
+              if (typeof hmApp !== 'undefined' && hmApp.startApp) {
+                hmApp.startApp({ url: 'ScheduleCalScreen', native: true })
+              }
+            }
+
+            function createCalendarButton(x, y, w, h) {
+              return hmUI.createWidget(hmUI.widget.BUTTON, {
+                x,
+                y,
+                w,
+                h,
+                text: '',
+                color: 0xffffff,
+                text_size: 1,
+                normal_src: 'null.png',
+                press_src: 'null.png',
+                click_func: () => {
+                  openCalendarApp()
+                },
+                show_level: hmUI.show_level.ONLY_NORMAL,
               })
             }
 
@@ -201,14 +479,7 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_moon_image_progress_img_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-              x: 221,
-              y: 390,
-              image_array: ["Moon_30_01.png","Moon_30_02.png","Moon_30_03.png","Moon_30_04.png","Moon_30_05.png","Moon_30_06.png","Moon_30_07.png","Moon_30_08.png","Moon_30_09.png","Moon_30_10.png","Moon_30_11.png","Moon_30_12.png","Moon_30_13.png","Moon_30_14.png","Moon_30_15.png","Moon_30_16.png","Moon_30_17.png","Moon_30_18.png","Moon_30_19.png","Moon_30_20.png","Moon_30_21.png","Moon_30_22.png","Moon_30_23.png","Moon_30_24.png","Moon_30_25.png","Moon_30_26.png","Moon_30_27.png","Moon_30_28.png","Moon_30_29.png","Moon_30_30.png"],
-              image_length: 30,
-              type: hmUI.data_type.MOON,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_moon_image_progress_img_level = createSolarTermText(hmUI.show_level.ONLY_NORMAL);
 
             normal_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 257,
@@ -267,186 +538,101 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_altimeter_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 140,
-              y: 409,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.ALTIMETER,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_altimeter_text_text_img = createLunarMonthText(hmUI.show_level.ONLY_NORMAL);
 
-            normal_humidity_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 169,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              unit_sc: 'procent_small.png',
-              unit_tc: 'procent_small.png',
-              unit_en: 'procent_small.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.HUMIDITY,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_wind_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 116,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.LEFT,
-              type: hmUI.data_type.WIND,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_uvi_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 72,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.UVI,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_stand_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 262,
-              y: 409,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.STAND,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_stand_current_text_img = createLunarDayText(hmUI.show_level.ONLY_NORMAL);
 
             normal_stress_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 352,
+              x: 160,
               y: 359,
+              w: 70,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STRESS,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_spo2_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 294,
+              x: 75,
               y: 359,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              unit_sc: 'procent_small.png',
-              unit_tc: 'procent_small.png',
-              unit_en: 'procent_small.png',
               invalid_image: 'weather_29.png',
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.SPO2,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_heart_rate_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 235,
+              x: 250,
               y: 359,
+              w: 70,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.HEART,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_distance_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 325,
+              x: 305,
               y: 306,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              unit_sc: 'km.png',
-              unit_tc: 'km.png',
-              unit_en: 'km.png',
-              imperial_unit_sc: 'ml.png',
-              imperial_unit_tc: 'ml.png',
-              imperial_unit_en: 'ml.png',
               dot_image: 'decimal.png',
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.DISTANCE,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_pai_weekly_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 249,
-              y: 306,
+              x: 345,
+              y: 359,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.PAI_WEEKLY,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_calorie_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 170,
+              x: 195,
               y: 306,
+              w: 90,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.CAL,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_step_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 76,
+              x: 85,
               y: 306,
+              w: 80,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STEP,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_date_img_date_month = hmUI.createWidget(hmUI.widget.IMG_DATE, {
-              month_startX: 305,
-              month_startY: 92,
-              month_sc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_tc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_en_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_zero: 1,
-              month_space: 0,
-              month_align: hmUI.align.CENTER_H,
-              month_is_character: false,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_date_img_date_month = createMonthText(hmUI.show_level.ONLY_NORMAL);
 
-            normal_date_img_date_week_img = hmUI.createWidget(hmUI.widget.IMG_WEEK, {
-              x: 199,
-              y: 89,
-              week_en: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              week_tc: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              week_sc: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_date_img_date_week_img = createWeekText(hmUI.show_level.ONLY_NORMAL);
 
-            normal_date_img_date_day = hmUI.createWidget(hmUI.widget.IMG_DATE, {
-              day_startX: 129,
-              day_startY: 89,
-              day_sc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_tc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_en_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_zero: 0,
-              day_space: 0,
-              day_align: hmUI.align.CENTER_H,
-              day_is_character: false,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
+            normal_date_img_date_day = createDayText(hmUI.show_level.ONLY_NORMAL);
 
             normal_battery_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 206,
@@ -517,30 +703,7 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            createLabel('POWER', 199, 36, 80, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('DAY', 123, 72, 60, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('MONTH', 294, 72, 80, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('STEPS', 62, 286, 80, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('KCAL', 153, 286, 70, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('PAI', 240, 286, 60, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('DIST', 315, 286, 75, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('UV', 58, 340, 50, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('WIND', 98, 340, 60, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('HUMI', 158, 340, 64, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('BPM', 225, 340, 56, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('O2', 288, 340, 50, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('STRESS', 342, 340, 82, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('HPA', 136, 391, 70, 16, hmUI.show_level.ONLY_NORMAL)
-            createLabel('STAND', 246, 391, 92, 16, hmUI.show_level.ONLY_NORMAL)
-
-            createBar(145, 292, 43, hmUI.show_level.ONLY_NORMAL)
-            createBar(230, 292, 43, hmUI.show_level.ONLY_NORMAL)
-            createBar(310, 292, 43, hmUI.show_level.ONLY_NORMAL)
-            createBar(101, 344, 42, hmUI.show_level.ONLY_NORMAL)
-            createBar(155, 344, 42, hmUI.show_level.ONLY_NORMAL)
-            createBar(220, 344, 42, hmUI.show_level.ONLY_NORMAL)
-            createBar(284, 344, 42, hmUI.show_level.ONLY_NORMAL)
-            createBar(342, 344, 42, hmUI.show_level.ONLY_NORMAL)
+            renderStaticText(hmUI.show_level.ONLY_NORMAL)
 
             normal_alarm_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
               x: 11,
@@ -549,26 +712,6 @@
               h: 49,
               src: 'shortcut.png',
               type: hmUI.data_type.ALARM_CLOCK,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_sunrise_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 202,
-              y: 390,
-              w: 91,
-              h: 81,
-              src: 'shortcut.png',
-              type: hmUI.data_type.SUN_CURRENT,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_altimeter_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 89,
-              y: 390,
-              w: 111,
-              h: 68,
-              src: 'shortcut.png',
-              type: hmUI.data_type.ALTIMETER,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
@@ -583,54 +726,64 @@
             });
 
             normal_stress_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 356,
-              y: 332,
-              w: 68,
-              h: 59,
+              x: 160,
+              y: 340,
+              w: 70,
+              h: 39,
               src: 'shortcut.png',
               type: hmUI.data_type.STRESS,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_pai_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 243,
-              y: 272,
-              w: 77,
-              h: 58,
+              x: 345,
+              y: 340,
+              w: 60,
+              h: 39,
               src: 'shortcut.png',
               type: hmUI.data_type.PAI_WEEKLY,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_spo2_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 291,
-              y: 333,
-              w: 56,
-              h: 58,
+              x: 75,
+              y: 340,
+              w: 60,
+              h: 39,
               src: 'shortcut.png',
               type: hmUI.data_type.SPO2,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_heart_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 222,
-              y: 333,
-              w: 64,
-              h: 58,
+              x: 250,
+              y: 340,
+              w: 70,
+              h: 39,
               src: 'shortcut.png',
               type: hmUI.data_type.HEART,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
             normal_step_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
-              x: 57,
-              y: 272,
-              w: 109,
-              h: 58,
+              x: 85,
+              y: 286,
+              w: 80,
+              h: 39,
               src: 'shortcut.png',
               type: hmUI.data_type.STEP,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
+
+            normal_month_calendar_button = createCalendarButton(112, 86, 92, 36)
+
+            normal_day_calendar_button = createCalendarButton(286, 86, 104, 36)
+
+            normal_lunar_month_calendar_button = createCalendarButton(115, 400, 60, 28)
+
+            normal_solar_term_calendar_button = createCalendarButton(195, 400, 90, 28)
+
+            normal_lunar_day_calendar_button = createCalendarButton(305, 400, 60, 28)
 
 
             idle_background_bg_img = hmUI.createWidget(hmUI.widget.IMG, {
@@ -698,14 +851,7 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_moon_image_progress_img_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-              x: 221,
-              y: 390,
-              image_array: ["Moon_30_01.png","Moon_30_02.png","Moon_30_03.png","Moon_30_04.png","Moon_30_05.png","Moon_30_06.png","Moon_30_07.png","Moon_30_08.png","Moon_30_09.png","Moon_30_10.png","Moon_30_11.png","Moon_30_12.png","Moon_30_13.png","Moon_30_14.png","Moon_30_15.png","Moon_30_16.png","Moon_30_17.png","Moon_30_18.png","Moon_30_19.png","Moon_30_20.png","Moon_30_21.png","Moon_30_22.png","Moon_30_23.png","Moon_30_24.png","Moon_30_25.png","Moon_30_26.png","Moon_30_27.png","Moon_30_28.png","Moon_30_29.png","Moon_30_30.png"],
-              image_length: 30,
-              type: hmUI.data_type.MOON,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_moon_image_progress_img_level = createSolarTermText(hmUI.show_level.ONAL_AOD);
 
             idle_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 257,
@@ -764,186 +910,101 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_altimeter_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 140,
-              y: 409,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.ALTIMETER,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_altimeter_text_text_img = createLunarMonthText(hmUI.show_level.ONAL_AOD);
 
-            idle_humidity_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 169,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              unit_sc: 'procent_small.png',
-              unit_tc: 'procent_small.png',
-              unit_en: 'procent_small.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.HUMIDITY,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_wind_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 116,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.LEFT,
-              type: hmUI.data_type.WIND,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_uvi_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 72,
-              y: 359,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.UVI,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_stand_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 262,
-              y: 409,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.STAND,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_stand_current_text_img = createLunarDayText(hmUI.show_level.ONAL_AOD);
 
             idle_stress_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 352,
+              x: 160,
               y: 359,
+              w: 70,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STRESS,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_spo2_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 294,
+              x: 75,
               y: 359,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              unit_sc: 'procent_small.png',
-              unit_tc: 'procent_small.png',
-              unit_en: 'procent_small.png',
               invalid_image: 'weather_29.png',
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.SPO2,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_heart_rate_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 235,
+              x: 250,
               y: 359,
+              w: 70,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.HEART,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_distance_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 325,
+              x: 305,
               y: 306,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              unit_sc: 'km.png',
-              unit_tc: 'km.png',
-              unit_en: 'km.png',
-              imperial_unit_sc: 'ml.png',
-              imperial_unit_tc: 'ml.png',
-              imperial_unit_en: 'ml.png',
               dot_image: 'decimal.png',
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.DISTANCE,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_pai_weekly_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 249,
-              y: 306,
+              x: 345,
+              y: 359,
+              w: 60,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.PAI_WEEKLY,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_calorie_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 170,
+              x: 195,
               y: 306,
+              w: 90,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.CAL,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
             idle_step_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 76,
+              x: 85,
               y: 306,
+              w: 80,
               font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
               padding: false,
               h_space: -2,
-              align_h: hmUI.align.LEFT,
+              align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STEP,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_date_img_date_month = hmUI.createWidget(hmUI.widget.IMG_DATE, {
-              month_startX: 305,
-              month_startY: 92,
-              month_sc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_tc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_en_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              month_zero: 1,
-              month_space: 0,
-              month_align: hmUI.align.CENTER_H,
-              month_is_character: false,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_date_img_date_month = createMonthText(hmUI.show_level.ONAL_AOD);
 
-            idle_date_img_date_week_img = hmUI.createWidget(hmUI.widget.IMG_WEEK, {
-              x: 199,
-              y: 89,
-              week_en: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              week_tc: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              week_sc: ["digital5_0.png","digital5_1.png","digital5_2.png","digital5_3.png","digital5_4.png","digital5_5.png","digital5_6.png"],
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_date_img_date_week_img = createWeekText(hmUI.show_level.ONAL_AOD);
 
-            idle_date_img_date_day = hmUI.createWidget(hmUI.widget.IMG_DATE, {
-              day_startX: 129,
-              day_startY: 89,
-              day_sc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_tc_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_en_array: ["digital4_0.png","digital4_1.png","digital4_2.png","digital4_3.png","digital4_4.png","digital4_5.png","digital4_6.png","digital4_7.png","digital4_8.png","digital4_9.png"],
-              day_zero: 0,
-              day_space: 0,
-              day_align: hmUI.align.CENTER_H,
-              day_is_character: false,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
+            idle_date_img_date_day = createDayText(hmUI.show_level.ONAL_AOD);
 
             idle_battery_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 206,
@@ -1006,30 +1067,7 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            createLabel('POWER', 199, 36, 80, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('DAY', 123, 72, 60, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('MONTH', 294, 72, 80, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('STEPS', 62, 286, 80, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('KCAL', 153, 286, 70, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('PAI', 240, 286, 60, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('DIST', 315, 286, 75, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('UV', 58, 340, 50, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('WIND', 98, 340, 60, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('HUMI', 158, 340, 64, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('BPM', 225, 340, 56, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('O2', 288, 340, 50, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('STRESS', 342, 340, 82, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('HPA', 136, 391, 70, 16, hmUI.show_level.ONAL_AOD)
-            createLabel('STAND', 246, 391, 92, 16, hmUI.show_level.ONAL_AOD)
-
-            createBar(145, 292, 43, hmUI.show_level.ONAL_AOD)
-            createBar(230, 292, 43, hmUI.show_level.ONAL_AOD)
-            createBar(310, 292, 43, hmUI.show_level.ONAL_AOD)
-            createBar(101, 344, 42, hmUI.show_level.ONAL_AOD)
-            createBar(155, 344, 42, hmUI.show_level.ONAL_AOD)
-            createBar(220, 344, 42, hmUI.show_level.ONAL_AOD)
-            createBar(284, 344, 42, hmUI.show_level.ONAL_AOD)
-            createBar(342, 344, 42, hmUI.show_level.ONAL_AOD)
+            renderStaticText(hmUI.show_level.ONAL_AOD)
 
 
             //dynamic modify end
@@ -1063,4 +1101,3 @@
     } catch (e) {
       console.log(e)
     }
-  
