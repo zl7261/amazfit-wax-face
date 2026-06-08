@@ -1,8 +1,8 @@
 {
   "configVersion": "v2",
   "app": {
-    "appId": 3204301,
-    "appName": "Vision_Digital_Balance_FAOD",
+    "appId": 1116569,
+    "appName": "WAX",
     "appType": "watchface",
     "version": {
       "code": 1,
@@ -54,7 +54,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Vision Digital Balance"
+      "appName": "WAX"
     }
   },
   "defaultLanguage": "en-US",

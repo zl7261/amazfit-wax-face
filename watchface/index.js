@@ -105,13 +105,43 @@
 
             //dynamic modify start
                     
+            function createLabel(text, x, y, w, h, showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x,
+                y,
+                w,
+                h,
+                text,
+                text_size: 14,
+                color: 0x8a8a8a,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
+            function createBar(x, y, h, showLevel) {
+              return hmUI.createWidget(hmUI.widget.TEXT, {
+                x,
+                y,
+                w: 10,
+                h,
+                text: '|',
+                text_size: 22,
+                color: 0x8a8a8a,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+            }
+
             
             normal_background_bg_img = hmUI.createWidget(hmUI.widget.IMG, {
               x: 0,
               y: 0,
               w: 480,
               h: 480,
-              src: 'grey480-new2.png',
+              src: 'AOD5.png',
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
@@ -482,10 +512,35 @@
               second_path: 'analog_sec.png',
               second_centerX: 240,
               second_centerY: 240,
-              second_posX: 31,
+              second_posX: 24,
               second_posY: 232,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
+
+            createLabel('POWER', 199, 36, 80, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('DAY', 123, 72, 60, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('MONTH', 294, 72, 80, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('STEPS', 62, 286, 80, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('KCAL', 153, 286, 70, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('PAI', 240, 286, 60, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('DIST', 315, 286, 75, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('UV', 58, 340, 50, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('WIND', 98, 340, 60, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('HUMI', 158, 340, 64, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('BPM', 225, 340, 56, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('O2', 288, 340, 50, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('STRESS', 342, 340, 82, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('HPA', 136, 391, 70, 16, hmUI.show_level.ONLY_NORMAL)
+            createLabel('STAND', 246, 391, 92, 16, hmUI.show_level.ONLY_NORMAL)
+
+            createBar(145, 292, 43, hmUI.show_level.ONLY_NORMAL)
+            createBar(230, 292, 43, hmUI.show_level.ONLY_NORMAL)
+            createBar(310, 292, 43, hmUI.show_level.ONLY_NORMAL)
+            createBar(101, 344, 42, hmUI.show_level.ONLY_NORMAL)
+            createBar(155, 344, 42, hmUI.show_level.ONLY_NORMAL)
+            createBar(220, 344, 42, hmUI.show_level.ONLY_NORMAL)
+            createBar(284, 344, 42, hmUI.show_level.ONLY_NORMAL)
+            createBar(342, 344, 42, hmUI.show_level.ONLY_NORMAL)
 
             normal_alarm_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
               x: 11,
@@ -583,7 +638,7 @@
               y: 0,
               w: 480,
               h: 480,
-              src: 'grey480-new2.png',
+              src: 'AOD5.png',
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
@@ -946,10 +1001,35 @@
               second_path: 'analog_sec.png',
               second_centerX: 240,
               second_centerY: 240,
-              second_posX: 31,
+              second_posX: 24,
               second_posY: 232,
               show_level: hmUI.show_level.ONAL_AOD,
             });
+
+            createLabel('POWER', 199, 36, 80, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('DAY', 123, 72, 60, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('MONTH', 294, 72, 80, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('STEPS', 62, 286, 80, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('KCAL', 153, 286, 70, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('PAI', 240, 286, 60, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('DIST', 315, 286, 75, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('UV', 58, 340, 50, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('WIND', 98, 340, 60, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('HUMI', 158, 340, 64, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('BPM', 225, 340, 56, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('O2', 288, 340, 50, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('STRESS', 342, 340, 82, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('HPA', 136, 391, 70, 16, hmUI.show_level.ONAL_AOD)
+            createLabel('STAND', 246, 391, 92, 16, hmUI.show_level.ONAL_AOD)
+
+            createBar(145, 292, 43, hmUI.show_level.ONAL_AOD)
+            createBar(230, 292, 43, hmUI.show_level.ONAL_AOD)
+            createBar(310, 292, 43, hmUI.show_level.ONAL_AOD)
+            createBar(101, 344, 42, hmUI.show_level.ONAL_AOD)
+            createBar(155, 344, 42, hmUI.show_level.ONAL_AOD)
+            createBar(220, 344, 42, hmUI.show_level.ONAL_AOD)
+            createBar(284, 344, 42, hmUI.show_level.ONAL_AOD)
+            createBar(342, 344, 42, hmUI.show_level.ONAL_AOD)
 
 
             //dynamic modify end
