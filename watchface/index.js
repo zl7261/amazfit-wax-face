@@ -694,15 +694,6 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_analog_clock_time_pointer_second = hmUI.createWidget(hmUI.widget.TIME_POINTER, {
-              second_path: 'analog_sec.png',
-              second_centerX: 240,
-              second_centerY: 240,
-              second_posX: 24,
-              second_posY: 232,
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
             renderStaticText(hmUI.show_level.ONLY_NORMAL)
 
             normal_alarm_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
@@ -1055,15 +1046,6 @@
               x: 230,
               y: 172,
               src: 'digital9_10.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_analog_clock_time_pointer_second = hmUI.createWidget(hmUI.widget.TIME_POINTER, {
-              second_path: 'analog_sec.png',
-              second_centerX: 240,
-              second_centerY: 240,
-              second_posX: 24,
-              second_posY: 232,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
