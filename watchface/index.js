@@ -11,8 +11,6 @@
 
         var __$$app$$__ = __$$hmAppManager$$__.currentApp;
         var __$$module$$__ = __$$app$$__.current;
-        //drink is a name,can modify
-        var h = new DeviceRuntimeCore.WidgetFactory(new DeviceRuntimeCore.HmDomApi(__$$app$$__, __$$module$$__), 'drink');
 
         'use strict';
 
@@ -32,9 +30,6 @@
         let normal_temperature_current_text_img = ''
         let normal_weather_image_progress_img_level = ''
         let normal_altimeter_text_text_img = ''
-        let normal_humidity_text_text_img = ''
-        let normal_wind_text_text_img = ''
-        let normal_uvi_text_text_img = ''
         let normal_stand_current_text_img = ''
         let normal_stress_text_text_img = ''
         let normal_spo2_text_text_img = ''
@@ -52,8 +47,6 @@
         let normal_digital_clock_second_separator_img = ''
         let normal_analog_clock_time_pointer_second = ''
         let normal_alarm_jumpable_img_click = ''
-        let normal_sunrise_jumpable_img_click = ''
-        let normal_altimeter_jumpable_img_click = ''
         let normal_temperature_jumpable_img_click = ''
         let normal_stress_jumpable_img_click = ''
         let normal_pai_jumpable_img_click = ''
@@ -78,9 +71,6 @@
         let idle_temperature_current_text_img = ''
         let idle_weather_image_progress_img_level = ''
         let idle_altimeter_text_text_img = ''
-        let idle_humidity_text_text_img = ''
-        let idle_wind_text_text_img = ''
-        let idle_uvi_text_text_img = ''
         let idle_stand_current_text_img = ''
         let idle_stress_text_text_img = ''
         let idle_spo2_text_text_img = ''
@@ -100,9 +90,6 @@
 
 
         //dynamic modify end
-
-        //not required
-        const logger = DeviceRuntimeCore.HmLogger.getLogger("yeguang");
 
         __$$module$$__.module = DeviceRuntimeCore.WatchFace({
 
