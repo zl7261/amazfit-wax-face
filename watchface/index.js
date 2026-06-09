@@ -41,11 +41,10 @@
         let normal_date_img_date_month = ''
         let normal_date_img_date_week_img = ''
         let normal_date_img_date_day = ''
-        let normal_battery_text_text_img = ''
+        let normal_battery_fill_level = ''
         let normal_digital_clock_img_time_AmPm = ''
         let normal_digital_clock_img_time = ''
         let normal_digital_clock_second_separator_img = ''
-        let normal_analog_clock_time_pointer_second = ''
         let normal_alarm_jumpable_img_click = ''
         let normal_temperature_jumpable_img_click = ''
         let normal_stress_jumpable_img_click = ''
@@ -82,11 +81,10 @@
         let idle_date_img_date_month = ''
         let idle_date_img_date_week_img = ''
         let idle_date_img_date_day = ''
-        let idle_battery_text_text_img = ''
+        let idle_battery_fill_level = ''
         let idle_digital_clock_img_time_AmPm = ''
         let idle_digital_clock_img_time = ''
         let idle_digital_clock_minute_separator_img = ''
-        let idle_analog_clock_time_pointer_second = ''
 
 
         //dynamic modify end
@@ -98,7 +96,6 @@
             //dynamic modify start
 
             const STATIC_LABELS = [
-              ['电量', 199, 36, 80, 16],
               ['步数', 85, 286, 80, 16],
               ['消耗', 195, 286, 90, 16],
               ['距离', 305, 286, 80, 16],
@@ -621,16 +618,11 @@
 
             normal_date_img_date_day = createDayText(hmUI.show_level.ONLY_NORMAL);
 
-            normal_battery_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 206,
-              y: 55,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: 0,
-              unit_sc: 'procent.png',
-              unit_tc: 'procent.png',
-              unit_en: 'procent.png',
-              align_h: hmUI.align.CENTER_H,
+            normal_battery_fill_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
+              x: 197,
+              y: 40,
+              image_array: ["battery_fill_0.png","battery_fill_1.png","battery_fill_2.png","battery_fill_3.png","battery_fill_4.png","battery_fill_5.png","battery_fill_6.png","battery_fill_7.png","battery_fill_8.png","battery_fill_9.png","battery_fill_10.png","battery_fill_11.png","battery_fill_12.png","battery_fill_13.png","battery_fill_14.png","battery_fill_15.png","battery_fill_16.png","battery_fill_17.png","battery_fill_18.png","battery_fill_19.png","battery_fill_20.png","battery_fill_21.png","battery_fill_22.png","battery_fill_23.png","battery_fill_24.png","battery_fill_25.png","battery_fill_26.png","battery_fill_27.png","battery_fill_28.png","battery_fill_29.png","battery_fill_30.png","battery_fill_31.png","battery_fill_32.png","battery_fill_33.png","battery_fill_34.png","battery_fill_35.png","battery_fill_36.png","battery_fill_37.png","battery_fill_38.png","battery_fill_39.png","battery_fill_40.png","battery_fill_41.png","battery_fill_42.png","battery_fill_43.png","battery_fill_44.png","battery_fill_45.png","battery_fill_46.png","battery_fill_47.png","battery_fill_48.png","battery_fill_49.png","battery_fill_50.png","battery_fill_51.png","battery_fill_52.png","battery_fill_53.png","battery_fill_54.png","battery_fill_55.png","battery_fill_56.png","battery_fill_57.png","battery_fill_58.png","battery_fill_59.png","battery_fill_60.png","battery_fill_61.png","battery_fill_62.png","battery_fill_63.png","battery_fill_64.png","battery_fill_65.png","battery_fill_66.png","battery_fill_67.png","battery_fill_68.png","battery_fill_69.png","battery_fill_70.png","battery_fill_71.png","battery_fill_72.png","battery_fill_73.png","battery_fill_74.png","battery_fill_75.png","battery_fill_76.png","battery_fill_77.png","battery_fill_78.png","battery_fill_79.png","battery_fill_80.png","battery_fill_81.png","battery_fill_82.png","battery_fill_83.png","battery_fill_84.png","battery_fill_85.png","battery_fill_86.png","battery_fill_87.png","battery_fill_88.png","battery_fill_89.png","battery_fill_90.png","battery_fill_91.png","battery_fill_92.png","battery_fill_93.png","battery_fill_94.png","battery_fill_95.png","battery_fill_96.png","battery_fill_97.png","battery_fill_98.png","battery_fill_99.png","battery_fill_100.png"],
+              image_length: 101,
               type: hmUI.data_type.BATTERY,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
@@ -678,15 +670,6 @@
               x: 230,
               y: 172,
               src: 'digital9_10.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_analog_clock_time_pointer_second = hmUI.createWidget(hmUI.widget.TIME_POINTER, {
-              second_path: 'analog_sec.png',
-              second_centerX: 240,
-              second_centerY: 240,
-              second_posX: 24,
-              second_posY: 232,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
@@ -993,16 +976,11 @@
 
             idle_date_img_date_day = createDayText(hmUI.show_level.ONAL_AOD);
 
-            idle_battery_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 206,
-              y: 55,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: 0,
-              unit_sc: 'procent.png',
-              unit_tc: 'procent.png',
-              unit_en: 'procent.png',
-              align_h: hmUI.align.CENTER_H,
+            idle_battery_fill_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
+              x: 197,
+              y: 40,
+              image_array: ["battery_fill_0.png","battery_fill_1.png","battery_fill_2.png","battery_fill_3.png","battery_fill_4.png","battery_fill_5.png","battery_fill_6.png","battery_fill_7.png","battery_fill_8.png","battery_fill_9.png","battery_fill_10.png","battery_fill_11.png","battery_fill_12.png","battery_fill_13.png","battery_fill_14.png","battery_fill_15.png","battery_fill_16.png","battery_fill_17.png","battery_fill_18.png","battery_fill_19.png","battery_fill_20.png","battery_fill_21.png","battery_fill_22.png","battery_fill_23.png","battery_fill_24.png","battery_fill_25.png","battery_fill_26.png","battery_fill_27.png","battery_fill_28.png","battery_fill_29.png","battery_fill_30.png","battery_fill_31.png","battery_fill_32.png","battery_fill_33.png","battery_fill_34.png","battery_fill_35.png","battery_fill_36.png","battery_fill_37.png","battery_fill_38.png","battery_fill_39.png","battery_fill_40.png","battery_fill_41.png","battery_fill_42.png","battery_fill_43.png","battery_fill_44.png","battery_fill_45.png","battery_fill_46.png","battery_fill_47.png","battery_fill_48.png","battery_fill_49.png","battery_fill_50.png","battery_fill_51.png","battery_fill_52.png","battery_fill_53.png","battery_fill_54.png","battery_fill_55.png","battery_fill_56.png","battery_fill_57.png","battery_fill_58.png","battery_fill_59.png","battery_fill_60.png","battery_fill_61.png","battery_fill_62.png","battery_fill_63.png","battery_fill_64.png","battery_fill_65.png","battery_fill_66.png","battery_fill_67.png","battery_fill_68.png","battery_fill_69.png","battery_fill_70.png","battery_fill_71.png","battery_fill_72.png","battery_fill_73.png","battery_fill_74.png","battery_fill_75.png","battery_fill_76.png","battery_fill_77.png","battery_fill_78.png","battery_fill_79.png","battery_fill_80.png","battery_fill_81.png","battery_fill_82.png","battery_fill_83.png","battery_fill_84.png","battery_fill_85.png","battery_fill_86.png","battery_fill_87.png","battery_fill_88.png","battery_fill_89.png","battery_fill_90.png","battery_fill_91.png","battery_fill_92.png","battery_fill_93.png","battery_fill_94.png","battery_fill_95.png","battery_fill_96.png","battery_fill_97.png","battery_fill_98.png","battery_fill_99.png","battery_fill_100.png"],
+              image_length: 101,
               type: hmUI.data_type.BATTERY,
               show_level: hmUI.show_level.ONAL_AOD,
             });
@@ -1042,15 +1020,6 @@
               x: 230,
               y: 172,
               src: 'digital9_10.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_analog_clock_time_pointer_second = hmUI.createWidget(hmUI.widget.TIME_POINTER, {
-              second_path: 'analog_sec.png',
-              second_centerX: 240,
-              second_centerY: 240,
-              second_posX: 24,
-              second_posY: 232,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
