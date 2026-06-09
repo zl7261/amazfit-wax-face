@@ -21,10 +21,8 @@
         let normal_system_disconnect_img = ''
         let normal_system_clock_img = ''
         let normal_sun_high_text_img = ''
-        let normal_sun_high_separator_img = ''
         let normal_sun_low_text_img = ''
-        let normal_sun_low_separator_img = ''
-        let normal_moon_image_progress_img_level = ''
+        let normal_solar_term_text = ''
         let normal_temperature_high_text_img = ''
         let normal_temperature_low_text_img = ''
         let normal_temperature_current_text_img = ''
@@ -32,7 +30,7 @@
         let normal_altimeter_text_text_img = ''
         let normal_stand_current_text_img = ''
         let normal_stress_text_text_img = ''
-        let normal_spo2_text_text_img = ''
+        let normal_hybridcharge_text_text_img = ''
         let normal_heart_rate_text_text_img = ''
         let normal_distance_text_text_img = ''
         let normal_pai_weekly_text_img = ''
@@ -49,7 +47,7 @@
         let normal_temperature_jumpable_img_click = ''
         let normal_stress_jumpable_img_click = ''
         let normal_pai_jumpable_img_click = ''
-        let normal_spo2_jumpable_img_click = ''
+        let normal_hybridcharge_jumpable_img_click = ''
         let normal_heart_jumpable_img_click = ''
         let normal_step_jumpable_img_click = ''
         let normal_month_calendar_button = ''
@@ -61,10 +59,8 @@
         let idle_system_disconnect_img = ''
         let idle_system_clock_img = ''
         let idle_sun_high_text_img = ''
-        let idle_sun_high_separator_img = ''
         let idle_sun_low_text_img = ''
-        let idle_sun_low_separator_img = ''
-        let idle_moon_image_progress_img_level = ''
+        let idle_solar_term_text = ''
         let idle_temperature_high_text_img = ''
         let idle_temperature_low_text_img = ''
         let idle_temperature_current_text_img = ''
@@ -72,7 +68,7 @@
         let idle_altimeter_text_text_img = ''
         let idle_stand_current_text_img = ''
         let idle_stress_text_text_img = ''
-        let idle_spo2_text_text_img = ''
+        let idle_hybridcharge_text_text_img = ''
         let idle_heart_rate_text_text_img = ''
         let idle_distance_text_text_img = ''
         let idle_pai_weekly_text_img = ''
@@ -99,7 +95,7 @@
               ['步数', 85, 286, 80, 16],
               ['消耗', 195, 286, 90, 16],
               ['距离', 305, 286, 80, 16],
-              ['血氧', 75, 340, 60, 16],
+              ['精力', 75, 340, 60, 16],
               ['压力', 160, 340, 70, 16],
               ['心率', 250, 340, 70, 16],
               ['PAI', 345, 340, 60, 16],
@@ -345,12 +341,12 @@
 
             function createLunarMonthText(showLevel) {
               const lunar = getLunarDate(new Date())
-              return createLunarText(`${lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[lunar.month - 1]}`, 115, 400, 60, showLevel)
+              return createLunarText(`${lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[lunar.month - 1]}`, 128, 400, 60, showLevel)
             }
 
             function createLunarDayText(showLevel) {
               const lunar = getLunarDate(new Date())
-              return createLunarText(formatLunarDay(lunar.day), 305, 400, 60, showLevel)
+              return createLunarText(formatLunarDay(lunar.day), 292, 400, 60, showLevel)
             }
 
             function createSolarTermText(showLevel) {
@@ -436,13 +432,6 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_sun_high_separator_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 78,
-              y: 149,
-              src: 'sunrise.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
             normal_sun_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 301,
               y: 157,
@@ -456,14 +445,7 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_sun_low_separator_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 374,
-              y: 149,
-              src: 'sunsetdown.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
-            });
-
-            normal_moon_image_progress_img_level = createSolarTermText(hmUI.show_level.ONLY_NORMAL);
+            normal_solar_term_text = createSolarTermText(hmUI.show_level.ONLY_NORMAL);
 
             normal_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 257,
@@ -538,7 +520,7 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_spo2_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
+            normal_hybridcharge_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 75,
               y: 359,
               w: 60,
@@ -547,7 +529,7 @@
               h_space: -2,
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.SPO2,
+              type: hmUI.data_type.BIO_CHARGE,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
@@ -715,13 +697,13 @@
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
-            normal_spo2_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
+            normal_hybridcharge_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
               x: 75,
               y: 340,
               w: 60,
               h: 39,
               src: 'shortcut.png',
-              type: hmUI.data_type.SPO2,
+              type: hmUI.data_type.BIO_CHARGE,
               show_level: hmUI.show_level.ONLY_NORMAL,
             });
 
@@ -749,11 +731,11 @@
 
             normal_day_calendar_button = createCalendarButton(286, 86, 104, 36)
 
-            normal_lunar_month_calendar_button = createCalendarButton(115, 400, 60, 28)
+            normal_lunar_month_calendar_button = createCalendarButton(128, 400, 60, 28)
 
             normal_solar_term_calendar_button = createCalendarButton(195, 400, 90, 28)
 
-            normal_lunar_day_calendar_button = createCalendarButton(305, 400, 60, 28)
+            normal_lunar_day_calendar_button = createCalendarButton(292, 400, 60, 28)
 
 
             idle_background_bg_img = hmUI.createWidget(hmUI.widget.IMG, {
@@ -794,13 +776,6 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_sun_high_separator_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 78,
-              y: 149,
-              src: 'sunrise.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
             idle_sun_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 301,
               y: 157,
@@ -814,14 +789,7 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_sun_low_separator_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 374,
-              y: 149,
-              src: 'sunsetdown.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_moon_image_progress_img_level = createSolarTermText(hmUI.show_level.ONAL_AOD);
+            idle_solar_term_text = createSolarTermText(hmUI.show_level.ONAL_AOD);
 
             idle_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 257,
@@ -896,7 +864,7 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_spo2_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
+            idle_hybridcharge_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 75,
               y: 359,
               w: 60,
@@ -905,7 +873,7 @@
               h_space: -2,
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.SPO2,
+              type: hmUI.data_type.BIO_CHARGE,
               show_level: hmUI.show_level.ONAL_AOD,
             });
 

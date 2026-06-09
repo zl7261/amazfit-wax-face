@@ -4,3 +4,4 @@ dist
 .traces
 scripts/*
 docs/*
+.DS_Store
