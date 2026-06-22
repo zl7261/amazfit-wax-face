@@ -55,32 +55,7 @@
         let normal_lunar_month_calendar_button = ''
         let normal_solar_term_calendar_button = ''
         let normal_lunar_day_calendar_button = ''
-        let idle_background_bg_img = ''
-        let idle_system_disconnect_img = ''
-        let idle_system_clock_img = ''
-        let idle_sun_high_text_img = ''
-        let idle_sun_low_text_img = ''
-        let idle_solar_term_text = ''
-        let idle_temperature_high_text_img = ''
-        let idle_temperature_low_text_img = ''
-        let idle_temperature_current_text_img = ''
-        let idle_weather_image_progress_img_level = ''
-        let idle_altimeter_text_text_img = ''
-        let idle_stand_current_text_img = ''
-        let idle_stress_text_text_img = ''
-        let idle_hybridcharge_text_text_img = ''
-        let idle_heart_rate_text_text_img = ''
-        let idle_distance_text_text_img = ''
-        let idle_pai_weekly_text_img = ''
-        let idle_calorie_current_text_img = ''
-        let idle_step_current_text_img = ''
-        let idle_date_img_date_month = ''
-        let idle_date_img_date_week_img = ''
-        let idle_date_img_date_day = ''
-        let idle_battery_fill_level = ''
-        let idle_digital_clock_img_time_AmPm = ''
         let idle_digital_clock_img_time = ''
-        let idle_digital_clock_minute_separator_img = ''
 
 
         //dynamic modify end
@@ -90,6 +65,16 @@
           init_view() {
 
             //dynamic modify start
+
+            const dateWidgets = []
+
+            const DIGITAL1 = Array.from({length: 10}, (_, i) => `digital1_${i}.png`)
+            const DIGITAL8 = Array.from({length: 10}, (_, i) => `digital8_${i}.png`)
+            const SMALL    = Array.from({length: 10}, (_, i) => `small_${i}.png`)
+            const BATTERY_FILL = Array.from({length: 101}, (_, i) => `battery_fill_${i}.png`)
+            // weather_018.png 是已知特例（其它都是 weather_<n>.png）
+            const WEATHER_IMAGES = Array.from({length: 29}, (_, i) =>
+              i === 18 ? 'weather_018.png' : `weather_${i}.png`)
 
             const STATIC_LABELS = [
               ['步数', 85, 286, 80, 16],
@@ -136,8 +121,32 @@
               '8-15': '中秋',
               '9-9': '重阳',
               '12-8': '腊八',
-              '12-23': '小年',
+              '12-24': '小年',
             }
+            const SOLAR_FESTIVALS = {
+              '1-1': '元旦',
+              '2-14': '情人节',
+              '3-8': '妇女节',
+              '3-12': '植树节',
+              '4-1': '愚人节',
+              '5-1': '劳动节',
+              '5-4': '青年节',
+              '6-1': '儿童节',
+              '7-1': '建党节',
+              '8-1': '建军节',
+              '9-10': '教师节',
+              '10-1': '国庆',
+              '10-31': '万圣夜',
+              '11-11': '光棍节',
+              '12-24': '平安夜',
+              '12-25': '圣诞',
+            }
+            // 浮动节日：[月, 第N个, 星期几(0=日)]
+            const FLOATING_FESTIVALS = [
+              [5, 2, 0, '母亲节'],
+              [6, 3, 0, '父亲节'],
+              [11, 4, 4, '感恩节'],
+            ]
             const SOLAR_TERM_NAMES = ['小寒', '大寒', '立春', '雨水', '惊蛰', '春分', '清明', '谷雨', '立夏', '小满', '芒种', '夏至', '小暑', '大暑', '立秋', '处暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至']
             const SOLAR_TERM_INFO = [0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072, 240693, 263343, 285989, 308563, 331033, 353350, 375494, 397447, 419210, 440795, 462224, 483532, 504758]
             const LUNAR_BASE_YEAR = 1900
@@ -174,7 +183,7 @@
             }
 
             function createWeekText(showLevel) {
-              return hmUI.createWidget(hmUI.widget.TEXT, {
+              const w = hmUI.createWidget(hmUI.widget.TEXT, {
                 x: 193,
                 y: 86,
                 w: 96,
@@ -186,6 +195,8 @@
                 align_v: hmUI.align.CENTER_V,
                 show_level: showLevel,
               })
+              dateWidgets.push({ w, fn: ctx => WEEK_TEXTS[ctx.date.getDay()] })
+              return w
             }
 
             function createDateText(text, x, y, w, showLevel) {
@@ -205,13 +216,16 @@
 
             function createMonthText(showLevel) {
               const currentDate = new Date()
-              return createDateText(`${currentDate.getMonth() + 1}月`, 112, 86, 92, showLevel)
+              const w = createDateText(`${currentDate.getMonth() + 1}月`, 112, 86, 92, showLevel)
+              dateWidgets.push({ w, fn: ctx => `${ctx.date.getMonth() + 1}月` })
+              return w
             }
 
             function createDayText(showLevel) {
               const currentDate = new Date()
-              const day = currentDate.getDate()
-              return createDateText(`${day}日`, 286, 86, 104, showLevel)
+              const w = createDateText(`${currentDate.getDate()}日`, 286, 86, 104, showLevel)
+              dateWidgets.push({ w, fn: ctx => `${ctx.date.getDate()}日` })
+              return w
             }
 
             function leapMonth(year) {
@@ -319,9 +333,23 @@
               return LUNAR_FESTIVALS[`${lunar.month}-${lunar.day}`] || ''
             }
 
+            function getSolarFestival(date) {
+              const key = `${date.getMonth() + 1}-${date.getDate()}`
+              if (SOLAR_FESTIVALS[key]) return SOLAR_FESTIVALS[key]
+              const month = date.getMonth() + 1
+              const day = date.getDate()
+              const weekday = date.getDay()
+              const nth = Math.floor((day - 1) / 7) + 1
+              for (let i = 0; i < FLOATING_FESTIVALS.length; i += 1) {
+                const f = FLOATING_FESTIVALS[i]
+                if (f[0] === month && f[1] === nth && f[2] === weekday) return f[3]
+              }
+              return ''
+            }
+
             function getFestivalOrSolarTerm(date) {
               const lunar = getLunarDate(date)
-              return getLunarFestival(lunar) || getCurrentSolarTerm(date)
+              return getLunarFestival(lunar) || getSolarFestival(date) || getCurrentSolarTerm(date)
             }
 
             function createLunarText(text, x, y, w, showLevel) {
@@ -341,16 +369,20 @@
 
             function createLunarMonthText(showLevel) {
               const lunar = getLunarDate(new Date())
-              return createLunarText(`${lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[lunar.month - 1]}`, 128, 400, 60, showLevel)
+              const w = createLunarText(`${lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[lunar.month - 1]}`, 128, 400, 60, showLevel)
+              dateWidgets.push({ w, fn: ctx => `${ctx.lunar.isLeap ? '闰' : ''}${LUNAR_MONTH_NAMES[ctx.lunar.month - 1]}` })
+              return w
             }
 
             function createLunarDayText(showLevel) {
               const lunar = getLunarDate(new Date())
-              return createLunarText(formatLunarDay(lunar.day), 292, 400, 60, showLevel)
+              const w = createLunarText(formatLunarDay(lunar.day), 292, 400, 60, showLevel)
+              dateWidgets.push({ w, fn: ctx => formatLunarDay(ctx.lunar.day) })
+              return w
             }
 
             function createSolarTermText(showLevel) {
-              return hmUI.createWidget(hmUI.widget.TEXT, {
+              const w = hmUI.createWidget(hmUI.widget.TEXT, {
                 x: 195,
                 y: 400,
                 w: 90,
@@ -362,6 +394,8 @@
                 align_v: hmUI.align.CENTER_V,
                 show_level: showLevel,
               })
+              dateWidgets.push({ w, fn: ctx => getLunarFestival(ctx.lunar) || getSolarFestival(ctx.date) || getCurrentSolarTerm(ctx.date) })
+              return w
             }
 
             function renderStaticText(showLevel) {
@@ -400,7 +434,7 @@
               w: 480,
               h: 480,
               src: 'AOD5.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_system_disconnect_img = hmUI.createWidget(hmUI.widget.IMG_STATUS, {
@@ -408,7 +442,7 @@
               y: 216,
               src: 'bluetooth_off.png',
               type: hmUI.system_status.DISCONNECT,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_system_clock_img = hmUI.createWidget(hmUI.widget.IMG_STATUS, {
@@ -416,41 +450,41 @@
               y: 233,
               src: 'alarm.png',
               type: hmUI.system_status.CLOCK,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_sun_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 117,
               y: 157,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
+              font_array: SMALL,
               padding: false,
               h_space: -1,
               invalid_image: 'weather_29.png',
               dot_image: 'digital1_point.png',
               align_h: hmUI.align.LEFT,
               type: hmUI.data_type.SUN_RISE,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_sun_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 301,
               y: 157,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
+              font_array: SMALL,
               padding: false,
               h_space: -1,
               invalid_image: 'weather_29.png',
               dot_image: 'digital1_point.png',
               align_h: hmUI.align.LEFT,
               type: hmUI.data_type.SUN_SET,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
-            normal_solar_term_text = createSolarTermText(hmUI.show_level.ONLY_NORMAL);
+            normal_solar_term_text = createSolarTermText(hmUI.show_level.ALL);
 
             normal_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 257,
               y: 137,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
+              font_array: SMALL,
               padding: false,
               h_space: -2,
               unit_sc: 'weather_30.png',
@@ -460,13 +494,13 @@
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.WEATHER_HIGH,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_temperature_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 184,
               y: 137,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
+              font_array: SMALL,
               padding: false,
               h_space: -2,
               unit_sc: 'weather_30.png',
@@ -476,13 +510,13 @@
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.WEATHER_LOW,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_temperature_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 221,
               y: 169,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
+              font_array: SMALL,
               padding: false,
               h_space: -2,
               unit_sc: 'weather_30.png',
@@ -492,121 +526,121 @@
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.WEATHER_CURRENT,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_weather_image_progress_img_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
               x: 225,
               y: 136,
-              image_array: ["weather_0.png","weather_1.png","weather_2.png","weather_3.png","weather_4.png","weather_5.png","weather_6.png","weather_7.png","weather_8.png","weather_9.png","weather_10.png","weather_11.png","weather_12.png","weather_13.png","weather_14.png","weather_15.png","weather_16.png","weather_17.png","weather_018.png","weather_19.png","weather_20.png","weather_21.png","weather_22.png","weather_23.png","weather_24.png","weather_25.png","weather_26.png","weather_27.png","weather_28.png"],
+              image_array: WEATHER_IMAGES,
               image_length: 29,
               type: hmUI.data_type.WEATHER_CURRENT,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
-            normal_altimeter_text_text_img = createLunarMonthText(hmUI.show_level.ONLY_NORMAL);
+            normal_altimeter_text_text_img = createLunarMonthText(hmUI.show_level.ALL);
 
-            normal_stand_current_text_img = createLunarDayText(hmUI.show_level.ONLY_NORMAL);
+            normal_stand_current_text_img = createLunarDayText(hmUI.show_level.ALL);
 
             normal_stress_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 160,
               y: 359,
               w: 70,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STRESS,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_hybridcharge_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 75,
               y: 359,
               w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               invalid_image: 'weather_29.png',
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.BIO_CHARGE,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_heart_rate_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 250,
               y: 359,
               w: 70,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.HEART,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_distance_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 305,
               y: 306,
               w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               dot_image: 'decimal.png',
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.DISTANCE,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_pai_weekly_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 345,
               y: 359,
               w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.PAI_WEEKLY,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_calorie_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 195,
               y: 306,
               w: 90,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.CAL,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_step_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
               x: 85,
               y: 306,
               w: 80,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              font_array: DIGITAL1,
               padding: false,
               h_space: -2,
               align_h: hmUI.align.CENTER_H,
               type: hmUI.data_type.STEP,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
-            normal_date_img_date_month = createMonthText(hmUI.show_level.ONLY_NORMAL);
+            normal_date_img_date_month = createMonthText(hmUI.show_level.ALL);
 
-            normal_date_img_date_week_img = createWeekText(hmUI.show_level.ONLY_NORMAL);
+            normal_date_img_date_week_img = createWeekText(hmUI.show_level.ALL);
 
-            normal_date_img_date_day = createDayText(hmUI.show_level.ONLY_NORMAL);
+            normal_date_img_date_day = createDayText(hmUI.show_level.ALL);
 
             normal_battery_fill_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
               x: 197,
               y: 40,
-              image_array: ["battery_fill_0.png","battery_fill_1.png","battery_fill_2.png","battery_fill_3.png","battery_fill_4.png","battery_fill_5.png","battery_fill_6.png","battery_fill_7.png","battery_fill_8.png","battery_fill_9.png","battery_fill_10.png","battery_fill_11.png","battery_fill_12.png","battery_fill_13.png","battery_fill_14.png","battery_fill_15.png","battery_fill_16.png","battery_fill_17.png","battery_fill_18.png","battery_fill_19.png","battery_fill_20.png","battery_fill_21.png","battery_fill_22.png","battery_fill_23.png","battery_fill_24.png","battery_fill_25.png","battery_fill_26.png","battery_fill_27.png","battery_fill_28.png","battery_fill_29.png","battery_fill_30.png","battery_fill_31.png","battery_fill_32.png","battery_fill_33.png","battery_fill_34.png","battery_fill_35.png","battery_fill_36.png","battery_fill_37.png","battery_fill_38.png","battery_fill_39.png","battery_fill_40.png","battery_fill_41.png","battery_fill_42.png","battery_fill_43.png","battery_fill_44.png","battery_fill_45.png","battery_fill_46.png","battery_fill_47.png","battery_fill_48.png","battery_fill_49.png","battery_fill_50.png","battery_fill_51.png","battery_fill_52.png","battery_fill_53.png","battery_fill_54.png","battery_fill_55.png","battery_fill_56.png","battery_fill_57.png","battery_fill_58.png","battery_fill_59.png","battery_fill_60.png","battery_fill_61.png","battery_fill_62.png","battery_fill_63.png","battery_fill_64.png","battery_fill_65.png","battery_fill_66.png","battery_fill_67.png","battery_fill_68.png","battery_fill_69.png","battery_fill_70.png","battery_fill_71.png","battery_fill_72.png","battery_fill_73.png","battery_fill_74.png","battery_fill_75.png","battery_fill_76.png","battery_fill_77.png","battery_fill_78.png","battery_fill_79.png","battery_fill_80.png","battery_fill_81.png","battery_fill_82.png","battery_fill_83.png","battery_fill_84.png","battery_fill_85.png","battery_fill_86.png","battery_fill_87.png","battery_fill_88.png","battery_fill_89.png","battery_fill_90.png","battery_fill_91.png","battery_fill_92.png","battery_fill_93.png","battery_fill_94.png","battery_fill_95.png","battery_fill_96.png","battery_fill_97.png","battery_fill_98.png","battery_fill_99.png","battery_fill_100.png"],
+              image_array: BATTERY_FILL,
               image_length: 101,
               type: hmUI.data_type.BATTERY,
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_digital_clock_img_time_AmPm = hmUI.createWidget(hmUI.widget.IMG_TIME, {
@@ -618,20 +652,20 @@
               pm_y: 210,
               pm_sc_path: 'PM_aod.png',
               pm_en_path: 'PM_aod.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
             normal_digital_clock_img_time = hmUI.createWidget(hmUI.widget.IMG_TIME, {
               hour_startX: 81,
               hour_startY: 190,
-              hour_array: ["digital8_0.png","digital8_1.png","digital8_2.png","digital8_3.png","digital8_4.png","digital8_5.png","digital8_6.png","digital8_7.png","digital8_8.png","digital8_9.png"],
+              hour_array: DIGITAL8,
               hour_zero: 1,
               hour_space: 7,
               hour_align: hmUI.align.LEFT,
 
               minute_startX: 276,
               minute_startY: 190,
-              minute_array: ["digital8_0.png","digital8_1.png","digital8_2.png","digital8_3.png","digital8_4.png","digital8_5.png","digital8_6.png","digital8_7.png","digital8_8.png","digital8_9.png"],
+              minute_array: DIGITAL8,
               minute_zero: 1,
               minute_space: 7,
               minute_follow: 0,
@@ -639,7 +673,7 @@
 
               second_startX: 412,
               second_startY: 245,
-              second_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
+              second_array: DIGITAL1,
               second_zero: 1,
               second_space: -1,
               second_follow: 0,
@@ -652,10 +686,10 @@
               x: 230,
               y: 172,
               src: 'digital9_10.png',
-              show_level: hmUI.show_level.ONLY_NORMAL,
+              show_level: hmUI.show_level.ALL,
             });
 
-            renderStaticText(hmUI.show_level.ONLY_NORMAL)
+            renderStaticText(hmUI.show_level.ALL)
 
             normal_alarm_jumpable_img_click = hmUI.createWidget(hmUI.widget.IMG_CLICK, {
               x: 11,
@@ -738,244 +772,18 @@
             normal_lunar_day_calendar_button = createCalendarButton(292, 400, 60, 28)
 
 
-            idle_background_bg_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 0,
-              y: 0,
-              w: 480,
-              h: 480,
-              src: 'AOD5.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_system_disconnect_img = hmUI.createWidget(hmUI.widget.IMG_STATUS, {
-              x: 417,
-              y: 216,
-              src: 'bluetooth_off.png',
-              type: hmUI.system_status.DISCONNECT,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_system_clock_img = hmUI.createWidget(hmUI.widget.IMG_STATUS, {
-              x: 45,
-              y: 233,
-              src: 'alarm.png',
-              type: hmUI.system_status.CLOCK,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_sun_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 117,
-              y: 157,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
-              padding: false,
-              h_space: -1,
-              invalid_image: 'weather_29.png',
-              dot_image: 'digital1_point.png',
-              align_h: hmUI.align.LEFT,
-              type: hmUI.data_type.SUN_RISE,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_sun_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 301,
-              y: 157,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
-              padding: false,
-              h_space: -1,
-              invalid_image: 'weather_29.png',
-              dot_image: 'digital1_point.png',
-              align_h: hmUI.align.LEFT,
-              type: hmUI.data_type.SUN_SET,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_solar_term_text = createSolarTermText(hmUI.show_level.ONAL_AOD);
-
-            idle_temperature_high_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 257,
-              y: 137,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
-              padding: false,
-              h_space: -2,
-              unit_sc: 'weather_30.png',
-              unit_tc: 'weather_30.png',
-              unit_en: 'weather_30.png',
-              negative_image: 'weather_29.png',
-              invalid_image: 'weather_29.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.WEATHER_HIGH,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_temperature_low_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 184,
-              y: 137,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
-              padding: false,
-              h_space: -2,
-              unit_sc: 'weather_30.png',
-              unit_tc: 'weather_30.png',
-              unit_en: 'weather_30.png',
-              negative_image: 'weather_29.png',
-              invalid_image: 'weather_29.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.WEATHER_LOW,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_temperature_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 221,
-              y: 169,
-              font_array: ["small_0.png","small_1.png","small_2.png","small_3.png","small_4.png","small_5.png","small_6.png","small_7.png","small_8.png","small_9.png"],
-              padding: false,
-              h_space: -2,
-              unit_sc: 'weather_30.png',
-              unit_tc: 'weather_30.png',
-              unit_en: 'weather_30.png',
-              negative_image: 'weather_29.png',
-              invalid_image: 'weather_29.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.WEATHER_CURRENT,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_weather_image_progress_img_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-              x: 225,
-              y: 136,
-              image_array: ["weather_0.png","weather_1.png","weather_2.png","weather_3.png","weather_4.png","weather_5.png","weather_6.png","weather_7.png","weather_8.png","weather_9.png","weather_10.png","weather_11.png","weather_12.png","weather_13.png","weather_14.png","weather_15.png","weather_16.png","weather_17.png","weather_018.png","weather_19.png","weather_20.png","weather_21.png","weather_22.png","weather_23.png","weather_24.png","weather_25.png","weather_26.png","weather_27.png","weather_28.png"],
-              image_length: 29,
-              type: hmUI.data_type.WEATHER_CURRENT,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_altimeter_text_text_img = createLunarMonthText(hmUI.show_level.ONAL_AOD);
-
-            idle_stand_current_text_img = createLunarDayText(hmUI.show_level.ONAL_AOD);
-
-            idle_stress_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 160,
-              y: 359,
-              w: 70,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.STRESS,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_hybridcharge_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 75,
-              y: 359,
-              w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              invalid_image: 'weather_29.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.BIO_CHARGE,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_heart_rate_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 250,
-              y: 359,
-              w: 70,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.HEART,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_distance_text_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 305,
-              y: 306,
-              w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              dot_image: 'decimal.png',
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.DISTANCE,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_pai_weekly_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 345,
-              y: 359,
-              w: 60,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.PAI_WEEKLY,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_calorie_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 195,
-              y: 306,
-              w: 90,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.CAL,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_step_current_text_img = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-              x: 85,
-              y: 306,
-              w: 80,
-              font_array: ["digital1_0.png","digital1_1.png","digital1_2.png","digital1_3.png","digital1_4.png","digital1_5.png","digital1_6.png","digital1_7.png","digital1_8.png","digital1_9.png"],
-              padding: false,
-              h_space: -2,
-              align_h: hmUI.align.CENTER_H,
-              type: hmUI.data_type.STEP,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_date_img_date_month = createMonthText(hmUI.show_level.ONAL_AOD);
-
-            idle_date_img_date_week_img = createWeekText(hmUI.show_level.ONAL_AOD);
-
-            idle_date_img_date_day = createDayText(hmUI.show_level.ONAL_AOD);
-
-            idle_battery_fill_level = hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-              x: 197,
-              y: 40,
-              image_array: ["battery_fill_0.png","battery_fill_1.png","battery_fill_2.png","battery_fill_3.png","battery_fill_4.png","battery_fill_5.png","battery_fill_6.png","battery_fill_7.png","battery_fill_8.png","battery_fill_9.png","battery_fill_10.png","battery_fill_11.png","battery_fill_12.png","battery_fill_13.png","battery_fill_14.png","battery_fill_15.png","battery_fill_16.png","battery_fill_17.png","battery_fill_18.png","battery_fill_19.png","battery_fill_20.png","battery_fill_21.png","battery_fill_22.png","battery_fill_23.png","battery_fill_24.png","battery_fill_25.png","battery_fill_26.png","battery_fill_27.png","battery_fill_28.png","battery_fill_29.png","battery_fill_30.png","battery_fill_31.png","battery_fill_32.png","battery_fill_33.png","battery_fill_34.png","battery_fill_35.png","battery_fill_36.png","battery_fill_37.png","battery_fill_38.png","battery_fill_39.png","battery_fill_40.png","battery_fill_41.png","battery_fill_42.png","battery_fill_43.png","battery_fill_44.png","battery_fill_45.png","battery_fill_46.png","battery_fill_47.png","battery_fill_48.png","battery_fill_49.png","battery_fill_50.png","battery_fill_51.png","battery_fill_52.png","battery_fill_53.png","battery_fill_54.png","battery_fill_55.png","battery_fill_56.png","battery_fill_57.png","battery_fill_58.png","battery_fill_59.png","battery_fill_60.png","battery_fill_61.png","battery_fill_62.png","battery_fill_63.png","battery_fill_64.png","battery_fill_65.png","battery_fill_66.png","battery_fill_67.png","battery_fill_68.png","battery_fill_69.png","battery_fill_70.png","battery_fill_71.png","battery_fill_72.png","battery_fill_73.png","battery_fill_74.png","battery_fill_75.png","battery_fill_76.png","battery_fill_77.png","battery_fill_78.png","battery_fill_79.png","battery_fill_80.png","battery_fill_81.png","battery_fill_82.png","battery_fill_83.png","battery_fill_84.png","battery_fill_85.png","battery_fill_86.png","battery_fill_87.png","battery_fill_88.png","battery_fill_89.png","battery_fill_90.png","battery_fill_91.png","battery_fill_92.png","battery_fill_93.png","battery_fill_94.png","battery_fill_95.png","battery_fill_96.png","battery_fill_97.png","battery_fill_98.png","battery_fill_99.png","battery_fill_100.png"],
-              image_length: 101,
-              type: hmUI.data_type.BATTERY,
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            idle_digital_clock_img_time_AmPm = hmUI.createWidget(hmUI.widget.IMG_TIME, {
-              am_x: 36,
-              am_y: 210,
-              am_sc_path: 'AM_aod.png',
-              am_en_path: 'AM_aod.png',
-              pm_x: 36,
-              pm_y: 210,
-              pm_sc_path: 'PM_aod.png',
-              pm_en_path: 'PM_aod.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
+            // AOD 专用：不带秒的时钟。其他 widget 已由 normal 段以 show_level.ALL 创建。
             idle_digital_clock_img_time = hmUI.createWidget(hmUI.widget.IMG_TIME, {
               hour_startX: 81,
               hour_startY: 190,
-              hour_array: ["digital8_0.png","digital8_1.png","digital8_2.png","digital8_3.png","digital8_4.png","digital8_5.png","digital8_6.png","digital8_7.png","digital8_8.png","digital8_9.png"],
+              hour_array: DIGITAL8,
               hour_zero: 1,
               hour_space: 7,
               hour_align: hmUI.align.LEFT,
 
               minute_startX: 276,
               minute_startY: 190,
-              minute_array: ["digital8_0.png","digital8_1.png","digital8_2.png","digital8_3.png","digital8_4.png","digital8_5.png","digital8_6.png","digital8_7.png","digital8_8.png","digital8_9.png"],
+              minute_array: DIGITAL8,
               minute_zero: 1,
               minute_space: 7,
               minute_follow: 0,
@@ -984,15 +792,20 @@
               show_level: hmUI.show_level.ONAL_AOD,
             });
 
-            idle_digital_clock_minute_separator_img = hmUI.createWidget(hmUI.widget.IMG, {
-              x: 230,
-              y: 172,
-              src: 'digital9_10.png',
-              show_level: hmUI.show_level.ONAL_AOD,
-            });
-
-            renderStaticText(hmUI.show_level.ONAL_AOD)
-
+            // 跨天刷新日期/农历/节气文字（widget 在 init 时被烧入固定文本，必须监听 day_change 重写）
+            try {
+              const timeSensor = hmSensor.createSensor(hmSensor.id.TIME)
+              timeSensor.addEventListener(timeSensor.event.DAY_CHANGE, () => {
+                const date = new Date()
+                const ctx = { date, lunar: getLunarDate(date) }
+                for (let i = 0; i < dateWidgets.length; i += 1) {
+                  const item = dateWidgets[i]
+                  item.w.setProperty(hmUI.prop.MORE, { text: item.fn(ctx) })
+                }
+              })
+            } catch (err) {
+              console.log('date refresh hook failed: ' + err)
+            }
 
             //dynamic modify end
           },
