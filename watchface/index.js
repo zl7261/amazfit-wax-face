@@ -41,6 +41,7 @@
         let normal_date_img_date_day = ''
         let normal_battery_fill_level = ''
         let normal_digital_clock_img_time_AmPm = ''
+        let normal_time_range_text = ''
         let normal_digital_clock_img_time = ''
         let normal_digital_clock_second_separator_img = ''
         let normal_alarm_jumpable_img_click = ''
@@ -56,6 +57,7 @@
         let normal_solar_term_calendar_button = ''
         let normal_lunar_day_calendar_button = ''
         let idle_digital_clock_img_time = ''
+        let refreshDateWidgets = null
 
 
         //dynamic modify end
@@ -151,6 +153,15 @@
             const SOLAR_TERM_INFO = [0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072, 240693, 263343, 285989, 308563, 331033, 353350, 375494, 397447, 419210, 440795, 462224, 483532, 504758]
             const LUNAR_BASE_YEAR = 1900
             const LUNAR_BASE_DAY = dateToDayNumber(new Date(1900, 0, 31))
+
+            function refreshDateWidgetText() {
+              const date = new Date()
+              const ctx = { date, lunar: getLunarDate(date) }
+              for (let i = 0; i < dateWidgets.length; i += 1) {
+                const item = dateWidgets[i]
+                item.w.setProperty(hmUI.prop.MORE, { text: item.fn(ctx) })
+              }
+            }
                     
             function createLabel(text, x, y, w, h, showLevel) {
               return hmUI.createWidget(hmUI.widget.TEXT, {
@@ -350,6 +361,32 @@
             function getFestivalOrSolarTerm(date) {
               const lunar = getLunarDate(date)
               return getLunarFestival(lunar) || getSolarFestival(date) || getCurrentSolarTerm(date)
+            }
+
+            function getTimeRangeText(date) {
+              const hour = date.getHours()
+              if (hour >= 5 && hour < 12) return '上午'
+              if (hour >= 12 && hour < 14) return '中午'
+              if (hour >= 14 && hour < 18) return '下午'
+              if (hour >= 18 && hour < 20) return '黄昏'
+              return '夜晚'
+            }
+
+            function createTimeRangeText(showLevel) {
+              const w = hmUI.createWidget(hmUI.widget.TEXT, {
+                x: 399,
+                y: 217,
+                w: 66,
+                h: 24,
+                text: getTimeRangeText(new Date()),
+                text_size: 20,
+                color: 0xffffff,
+                align_h: hmUI.align.CENTER_H,
+                align_v: hmUI.align.CENTER_V,
+                show_level: showLevel,
+              })
+              dateWidgets.push({ w, fn: ctx => getTimeRangeText(ctx.date) })
+              return w
             }
 
             function createLunarText(text, x, y, w, showLevel) {
@@ -655,6 +692,8 @@
               show_level: hmUI.show_level.ALL,
             });
 
+            normal_time_range_text = createTimeRangeText(hmUI.show_level.ONLY_NORMAL);
+
             normal_digital_clock_img_time = hmUI.createWidget(hmUI.widget.IMG_TIME, {
               hour_startX: 81,
               hour_startY: 190,
@@ -793,16 +832,18 @@
             });
 
             // 跨天刷新日期/农历/节气文字（widget 在 init 时被烧入固定文本，必须监听 day_change 重写）
+            refreshDateWidgets = refreshDateWidgetText
+            refreshDateWidgets()
             try {
               const timeSensor = hmSensor.createSensor(hmSensor.id.TIME)
               timeSensor.addEventListener(timeSensor.event.DAY_CHANGE, () => {
-                const date = new Date()
-                const ctx = { date, lunar: getLunarDate(date) }
-                for (let i = 0; i < dateWidgets.length; i += 1) {
-                  const item = dateWidgets[i]
-                  item.w.setProperty(hmUI.prop.MORE, { text: item.fn(ctx) })
-                }
+                refreshDateWidgets()
               })
+              if (timeSensor.event.MINUTE_CHANGE) {
+                timeSensor.addEventListener(timeSensor.event.MINUTE_CHANGE, () => {
+                  refreshDateWidgets()
+                })
+              }
             } catch (err) {
               console.log('date refresh hook failed: ' + err)
             }
@@ -823,6 +864,7 @@
 
           onShow() {
             console.log('index page.js on show invoke')
+            if (refreshDateWidgets) refreshDateWidgets()
           },
 
           onHide() {
