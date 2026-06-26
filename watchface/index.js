@@ -74,9 +74,9 @@
             const DIGITAL8 = Array.from({length: 10}, (_, i) => `digital8_${i}.png`)
             const SMALL    = Array.from({length: 10}, (_, i) => `small_${i}.png`)
             const BATTERY_FILL = Array.from({length: 101}, (_, i) => `battery_fill_${i}.png`)
-            // weather_018.png 是已知特例（其它都是 weather_<n>.png）
+            // weather_18.png 是已知特例（其它都是 weather_<n>.png）
             const WEATHER_IMAGES = Array.from({length: 29}, (_, i) =>
-              i === 18 ? 'weather_018.png' : `weather_${i}.png`)
+              i === 18 ? 'weather_18.png' : `weather_${i}.png`)
 
             const STATIC_LABELS = [
               ['步数', 85, 286, 80, 16],
