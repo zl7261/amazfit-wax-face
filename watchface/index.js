@@ -58,6 +58,7 @@
         let normal_lunar_day_calendar_button = ''
         let idle_digital_clock_img_time = ''
         let refreshDateWidgets = null
+        let date_refresh_delegate = ''
 
 
         //dynamic modify end
@@ -360,6 +361,10 @@
 
             function getFestivalOrSolarTerm(date) {
               const lunar = getLunarDate(date)
+              return getFestivalOrSolarTermFromContext(date, lunar)
+            }
+
+            function getFestivalOrSolarTermFromContext(date, lunar) {
               return getLunarFestival(lunar) || getSolarFestival(date) || getCurrentSolarTerm(date)
             }
 
@@ -431,7 +436,7 @@
                 align_v: hmUI.align.CENTER_V,
                 show_level: showLevel,
               })
-              dateWidgets.push({ w, fn: ctx => getLunarFestival(ctx.lunar) || getSolarFestival(ctx.date) || getCurrentSolarTerm(ctx.date) })
+              dateWidgets.push({ w, fn: ctx => getFestivalOrSolarTermFromContext(ctx.date, ctx.lunar) })
               return w
             }
 
@@ -479,7 +484,7 @@
               y: 216,
               src: 'bluetooth_off.png',
               type: hmUI.system_status.DISCONNECT,
-              show_level: hmUI.show_level.ALL,
+              show_level: hmUI.show_level.ONAL_AOD,
             });
 
             normal_system_clock_img = hmUI.createWidget(hmUI.widget.IMG_STATUS, {
@@ -847,6 +852,15 @@
             } catch (err) {
               console.log('date refresh hook failed: ' + err)
             }
+
+            date_refresh_delegate = hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
+              resume_call: () => {
+                if (refreshDateWidgets) refreshDateWidgets()
+              },
+              pause_call: () => {
+                if (refreshDateWidgets) refreshDateWidgets()
+              },
+            })
 
             //dynamic modify end
           },
